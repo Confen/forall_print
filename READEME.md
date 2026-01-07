@@ -1,0 +1,1 @@
+# 构建一个scf.forall的pass，以及输出结果

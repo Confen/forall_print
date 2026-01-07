@@ -1,0 +1,13 @@
+# ninja log v5
+27	101	1767767947824552500	dialect.h.inc	299465413652b2e9
+27	101	1767767947824552500	/mnt/d/project2/Project11/scf_forall/build/dialect.h.inc	299465413652b2e9
+26	106	1767767947824552500	dialect.cpp.inc	a4c524f9749625d0
+26	106	1767767947824552500	/mnt/d/project2/Project11/scf_forall/build/dialect.cpp.inc	a4c524f9749625d0
+110	182	1767767947894911600	dialect_op.cpp.inc	1eacbf65508d936a
+110	182	1767767947894911600	/mnt/d/project2/Project11/scf_forall/build/dialect_op.cpp.inc	1eacbf65508d936a
+110	184	1767767947894911600	dialect_op.h.inc	3edc69816c3554cd
+110	184	1767767947894911600	/mnt/d/project2/Project11/scf_forall/build/dialect_op.h.inc	3edc69816c3554cd
+186	2532	1767767950101122300	CMakeFiles/obj.TestDialect.dir/lib/dialect.cpp.o	a356c6b503789859
+2618	3071	1767767950600800400	libTestDialect.a	c3a79ebc0b563dfa
+187	6713	1767767953956162600	CMakeFiles/test-opt.dir/tools/test_opt.cpp.o	42f37899cfa51713
+6742	18997	1767767967566185100	test-opt	e1b46723da1b564a
