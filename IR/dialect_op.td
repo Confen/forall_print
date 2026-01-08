@@ -10,6 +10,7 @@ def PrintOp : Test_Op<"print", [Pure]>
 {
 	let summary = "print";
 	let arguments = (ins Index:$value);
+	let results = (outs Index:$type);
 }
 
 #endif

@@ -9,7 +9,7 @@ module {
     %5 = llvm.icmp "slt" %3, %1 : i64
     llvm.cond_br %5, ^bb2, ^bb3
   ^bb2:  // pred: ^bb1
-    "test.print"(%4) : (index) -> ()
+    "test.print"(%4) : (index) -> (index)
     %6 = llvm.add %3, %2 : i64
     llvm.br ^bb1(%6 : i64)
   ^bb3:  // pred: ^bb1

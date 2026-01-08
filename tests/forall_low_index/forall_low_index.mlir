@@ -10,17 +10,17 @@ module {
     %6 = llvm.icmp "slt" %4, %2 : i64
     llvm.cond_br %6, ^bb2, ^bb3(%1 : i64)
   ^bb2:  // pred: ^bb1
-    "test.print"(%5) : (index) -> ()
-    %7 = llvm.add %4, %3 : i64
-    llvm.br ^bb1(%7 : i64)
-  ^bb3(%8: i64):  // 2 preds: ^bb1, ^bb4
-    %9 = builtin.unrealized_conversion_cast %8 : i64 to index
-    %10 = llvm.icmp "slt" %8, %0 : i64
-    llvm.cond_br %10, ^bb4, ^bb5
+    %7 = "test.print"(%5) : (index) -> index
+    %8 = llvm.add %4, %3 : i64
+    llvm.br ^bb1(%8 : i64)
+  ^bb3(%9: i64):  // 2 preds: ^bb1, ^bb4
+    %10 = builtin.unrealized_conversion_cast %9 : i64 to index
+    %11 = llvm.icmp "slt" %9, %0 : i64
+    llvm.cond_br %11, ^bb4, ^bb5
   ^bb4:  // pred: ^bb3
-    "test.print"(%9) : (index) -> ()
-    %11 = llvm.add %8, %3 : i64
-    llvm.br ^bb3(%11 : i64)
+    %12 = "test.print"(%10) : (index) -> index
+    %13 = llvm.add %9, %3 : i64
+    llvm.br ^bb3(%13 : i64)
   ^bb5:  // pred: ^bb3
     llvm.return
   }

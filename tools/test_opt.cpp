@@ -140,11 +140,88 @@ struct LowerTestPrintPass
       op->erase();
   }
 };
+
+struct unique_add_pass : PassWrapper<unique_add_pass, OperationPass<ModuleOp>> {
+  MLIR_DEFINE_EXPLICIT_INTERNAL_INLINE_TYPE_ID(unique_add_pass)
+
+  StringRef getArgument() const final { return "lower-test-print-llvm-add"; }
+  StringRef getDescription() const final {
+    return "Lower test.print to llvm.call @test_print_i64 and llvm.add";
+  }
+
+  void runOnOperation() override {
+    ModuleOp module = getOperation();
+    MLIRContext *context = module.getContext();
+    OpBuilder moduleBuilder(module.getBodyRegion());
+
+    auto i64Type = IntegerType::get(context, 64);
+    auto voidType = LLVM::LLVMVoidType::get(context);
+
+    auto printName = StringRef("test_print_i64");
+    auto printFunc = module.lookupSymbol<LLVM::LLVMFuncOp>(printName);
+    if (!printFunc) {
+      moduleBuilder.setInsertionPointToStart(module.getBody());
+      auto printType =
+          LLVM::LLVMFunctionType::get(voidType, {i64Type}, /*isVarArg=*/false);
+      printFunc = moduleBuilder.create<LLVM::LLVMFuncOp>(
+          module.getLoc(), printName, printType);
+    }
+
+    SmallVector<Operation *, 4> toErase;
+    module.walk([&](Operation *op) {
+      if (op->getName().getStringRef() != "test.print")
+        return;
+
+      Value value = op->getOperand(0);
+      if (value.getType().isIndex()) {
+        Operation *def = value.getDefiningOp();
+        if (def && def->getName().getStringRef() ==
+                       "builtin.unrealized_conversion_cast" &&
+            def->getNumOperands() == 1) {
+          value = def->getOperand(0);
+        } else {
+          op->emitError("expected index from unrealized_conversion_cast");
+          signalPassFailure();
+          return;
+        }
+      }
+
+      if (!value.getType().isInteger(64)) {
+        op->emitError("expected i64 value for test.print");
+        signalPassFailure();
+        return;
+      }
+
+      OpBuilder builder(op);
+      auto c1 = builder.create<LLVM::ConstantOp>(
+          op->getLoc(), i64Type, builder.getI64IntegerAttr(1));
+      auto added = builder.create<LLVM::AddOp>(op->getLoc(), value, c1);
+      builder.create<LLVM::CallOp>(op->getLoc(), printFunc,
+                                   ValueRange{added});
+      toErase.push_back(op);
+    });
+
+    for (Operation *op : toErase)
+      op->erase();
+
+    SmallVector<Operation *, 4> deadCasts;
+    module.walk([&](Operation *op) {
+      if (op->getName().getStringRef() ==
+              "builtin.unrealized_conversion_cast" &&
+          op->use_empty()) {
+        deadCasts.push_back(op);
+      }
+    });
+    for (Operation *op : deadCasts)
+      op->erase();
+  }
+};
 } // namespace
 
 static void registerTestPasses() {
   PassRegistration<StripTestPrintPass>();
   PassRegistration<LowerTestPrintPass>();
+  PassRegistration<unique_add_pass>();
 }
 
 int main(int argc, char **argv) {
