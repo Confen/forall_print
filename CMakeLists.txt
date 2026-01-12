@@ -29,25 +29,34 @@ add_public_tablegen_target(DialectOpIncGen)
 add_custom_target(generate-inc ALL
 	DEPENDS DialectIncGen DialectOpIncGen)
 
-add_mlir_library(TestDialect
+	add_mlir_library(TestDialect
 	lib/dialect.cpp
 	PARTIAL_SOURCES_INTENDED
 	DEPENDS DialectIncGen DialectOpIncGen
-	LINK_LIBS PUBLIC MLIRIR)
-
+	LINK_LIBS PUBLIC
+	  MLIRIR
+	  MLIRSupport
+	  MLIRDialect
+  )
+  
+  
 add_llvm_executable(test-opt
 	tools/test_opt.cpp
 	PARTIAL_SOURCES_INTENDED)
 
 llvm_update_compile_flags(test-opt)
 target_link_libraries(test-opt PRIVATE
-	TestDialect
-	MLIROptLib
-	MLIRLLVMDialect
-	MLIRIR
-	MLIRFuncDialect
-	MLIRSCFDialect
-	MLIRParser
-	MLIRPass
-	MLIRSupport
-	MLIRTransforms)
+  TestDialect   # <<< 这一行必须加
+
+  MLIRIR
+  MLIRParser
+  MLIRPass
+  MLIRSupport
+  MLIROptLib
+
+  MLIRLLVMDialect
+  MLIRFuncDialect
+  MLIRSCFDialect
+  MLIRArithDialect
+)
+
