@@ -1,7 +1,7 @@
 #ifndef DIALECT_OP_
 #define DIALECT_OP_
 
-include "IR/dialect.td"
+include "Dialect/IR/dialect.td"
 include "mlir/Interfaces/SideEffectInterfaces.td"
 include "mlir/IR/AttrTypeBase.td"
 
@@ -14,6 +14,5 @@ def PrintOp : Test_Op<"print", [Pure]>
 }
 
 #endif
-
 
 
