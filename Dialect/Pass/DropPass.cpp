@@ -478,7 +478,7 @@ struct unique_add_pass : PassWrapper<unique_add_pass, OperationPass<ModuleOp>> {
 namespace mlir {
 namespace test {
 
-void registerTestPasses() {
+  void registerTestPasses() {
   PassRegistration<StripTestPrintPass>();
   PassRegistration<LowerTestPrintPass>();
   PassRegistration<unique_add_pass>();
